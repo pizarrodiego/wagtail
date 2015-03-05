@@ -1,7 +1,7 @@
 from django import http
 
 from wagtail.wagtailredirects import models
-
+from wagtail.wagtailcore.models import Site
 
 # Originally pinched from: https://github.com/django/django/blob/master/django/contrib/redirects/middleware.py
 class RedirectMiddleware(object):
@@ -15,7 +15,9 @@ class RedirectMiddleware(object):
 
         # Find redirect
         try:
-            redirect = models.Redirect.get_for_site(request.site).get(old_path=path)
+            # redirect = models.Redirect.get_for_site(request.site).get(old_path=path)
+            s = Site.objects.filter(is_default_site=True).first()
+            redirect = models.Redirect.get_for_site(s).get(old_path=path)
 
             if redirect.is_permanent:
                 return http.HttpResponsePermanentRedirect(redirect.link)

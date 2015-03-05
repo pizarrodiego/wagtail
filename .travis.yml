@@ -1,0 +1,49 @@
+language: python
+env:
+#  - TOXENV=py26-dj16-postgres
+  - TOXENV=py26-dj16-sqlite
+  - TOXENV=py27-dj16-postgres
+#  - TOXENV=py27-dj16-sqlite
+  - TOXENV=py32-dj16-postgres
+#  - TOXENV=py33-dj16-postgres
+  - TOXENV=py34-dj16-postgres
+  - TOXENV=py27-dj17-postgres
+#  - TOXENV=py27-dj17-sqlite
+#  - TOXENV=py32-dj17-postgres
+#  - TOXENV=py33-dj17-postgres
+  - TOXENV=py34-dj17-postgres
+
+# Services
+services:
+  - redis-server
+  - elasticsearch
+
+# Package installation
+install:
+  - pip install tox coveralls
+
+# Pre-test configuration
+before_script:
+  - psql -c 'create database wagtaildemo;' -U postgres
+
+# Run the tests
+script:
+  tox
+
+after_success:
+  coveralls
+
+# Who to notify about build results
+notifications:
+  email:
+    recipients:
+      - wagtail-ci@torchbox.com
+    on_success: change
+    on_failure: always
+  webhooks:
+    urls:
+      - secure: "dQZBPlCC2OQE2L7EqOMkKsQxCJm05BhFrfmKmJ0AnKqxiEyZDKd2JiQaMg8X7XtIdJ87dlnBZH5h3erPSMgI3mIfNCWKKs/f6idgWIXPpklzU95KmPOrCoOyT3lkDTEOXCYXhgvOExp8qLHc4qjEWbSoIfPwqYyPlGry3Z76UBM="
+    on_success: change
+    on_failure: always
+
+# bump Travis: 1
